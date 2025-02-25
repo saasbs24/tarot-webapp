@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор карт Таро</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <h1>🔮 Выберите 3 карты Таро</h1>
+
+    <div id="cards" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+    <button onclick="sendSelectedCards()">✅ Отправить выбранные карты</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const cards = [
+                "Башня.jpg", "Верховная жрица.jpg", "Влюбленные.jpg", "Дьявол.jpg", "Звезда.jpg", "Иерофант.jpg", 
+                "Император.jpg", "Императрица.jpg", "Колесница.jpg", "Колесо фортуны.jpg", "Королева кубков.jpg",
+                "Королева мечей.jpg", "Король жезлов.jpg", "Король кубков.jpg", "Король мечей.jpg", 
+                "Король пентаклей.jpg", "Луна.jpg", "Маг.jpg", "Мир.jpg", "Отшельник.jpg", "Паж жезлов.jpg", 
+                "Паж кубков.jpg", "Паж мечей.jpg", "Паж пентаклей.jpg", "Повешенный.jpg", "Пятерка жезлов.jpg",
+                "Пятерка кубков.jpg", "Пятерка мечей.jpg", "Рыцарь жезлов.jpg", "Рыцарь кубков.jpg", 
+                "Рыцарь мечей.jpg", "Рыцарь пентаклей.jpg", "Семерка жезлов.jpg", "Семерка кубков.jpg", 
+                "Семерка мечей.jpg", "Семерка пентаклей.jpg", "Сила.jpg", "Смерть.jpg", "Солнце.jpg", 
+                "Справедливость.jpg", "Суд.jpg", "Тройка жезлов.jpg", "Тройка кубков.jpg", "Тройка мечей.jpg", 
+                "Туз жезлов.jpg", "Туз кубков.jpg", "Туз мечей.jpg", "Туз пентаклей.jpg", "Умеренность.jpg", 
+                "Четверка жезлов.jpg", "Четверка кубков.jpg", "Четверка мечей.jpg", "Четверка пентаклей.jpg", 
+                "Шестерка жезлов.jpg", "Шестерка кубков.jpg", "Шестерка мечей.jpg", "Шестерка пентаклей.jpg", "Шут.jpg"
+            ];
+
+        const selectedCards = [];
+
+        function renderCards() {
+            const cardsDiv = document.getElementById("cards");
+            cards.forEach(card => {
+                const cardElement = document.createElement("div");
+                cardElement.textContent = card;
+                cardElement.style.border = "1px solid #000";
+                cardElement.style.padding = "10px";
+                cardElement.style.cursor = "pointer";
+                cardElement.onclick = () => toggleCard(cardElement, card);
+                cardsDiv.appendChild(cardElement);
+            });
+        }
+
+        function toggleCard(element, card) {
+            if (selectedCards.includes(card)) {
+                selectedCards.splice(selectedCards.indexOf(card), 1);
+                element.style.backgroundColor = "";
+            } else if (selectedCards.length < 3) {
+                selectedCards.push(card);
+                element.style.backgroundColor = "#90ee90";
+            } else {
+                alert("Вы можете выбрать только 3 карты!");
+            }
+        }
+
+        function sendSelectedCards() {
+            if (selectedCards.length !== 3) {
+                alert("Выберите ровно 3 карты!");
+                return;
+            }
+
+            tg.sendData(JSON.stringify({ cards: selectedCards }));
+            tg.close();
+        }
+
+        renderCards();
+    </script>
+</body>
+</html>
