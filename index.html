@@ -164,10 +164,10 @@
 				console.log("📤 Отправка данных в Telegram:", selected);
 
 				if (window.Telegram && window.Telegram.WebApp) {
-					const payload = JSON.stringify({ user_id: user_id, cards: selected });
+					const payload = { user_id: user_id, cards: selected };
 
 					console.log("🚀 Отправляем данные в бота:", payload);
-					window.Telegram.WebApp.sendData(payload);
+					window.Telegram.WebApp.sendData(JSON.stringify(payload));
 					
 					setTimeout(() => {
 						console.log("⏳ Ожидание перед закрытием WebApp...");
