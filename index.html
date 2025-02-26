@@ -145,6 +145,7 @@
         // Отправка выбранных карт
         document.getElementById("submitBtn").addEventListener("click", () => {
 			if (selected.length === 3) {
+				console.log("📤 Отправка данных в Telegram:", selected);
 				tg.sendData(JSON.stringify({ cards: selected }));
 				tg.close();
 			}
