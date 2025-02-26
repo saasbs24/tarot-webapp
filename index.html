@@ -144,11 +144,11 @@
 
         // Отправка выбранных карт
         document.getElementById("submitBtn").addEventListener("click", () => {
-            if (selected.length === 3) {
-                tg.sendData(JSON.stringify(selected));
-                tg.close();
-            }
-        });
+			if (selected.length === 3) {
+				tg.sendData(JSON.stringify({ cards: selected }));
+				tg.close();
+			}
+		});
     </script>
 </body>
 </html>
