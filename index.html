@@ -141,13 +141,41 @@
                 }
             }
         };
+		
+				// Функция для получения параметров из URL
+		function getUrlParams() {
+			const params = new URLSearchParams(window.location.search);
+			return Object.fromEntries(params.entries());
+		}
 
+		// Получаем user_id из URL
+		const params = getUrlParams();
+		const user_id = params.user_id;
+
+		if (!user_id) {
+			console.error("❌ Ошибка: user_id не передан в WebApp!");
+		} else {
+			console.log("✅ Получен user_id:", user_id);
+		}
+		
         // Отправка выбранных карт
         document.getElementById("submitBtn").addEventListener("click", () => {
 			if (selected.length === 3) {
 				console.log("📤 Отправка данных в Telegram:", selected);
-				tg.sendData(JSON.stringify({ cards: selected }));
-				tg.close();
+
+				if (window.Telegram && window.Telegram.WebApp) {
+					const payload = JSON.stringify({ user_id: user_id, cards: selected });
+
+					console.log("🚀 Отправляем данные в бота:", payload);
+					window.Telegram.WebApp.sendData(payload);
+					
+					setTimeout(() => {
+						console.log("⏳ Ожидание перед закрытием WebApp...");
+						window.Telegram.WebApp.close();
+					}, 2000);  // Увеличим задержку до 2 секунд
+				} else {
+					console.warn("⚠️ Telegram WebApp API недоступен, данные не отправлены!");
+				}
 			}
 		});
     </script>
