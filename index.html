@@ -172,7 +172,7 @@
 					setTimeout(() => {
 						console.log("⏳ Ожидание перед закрытием WebApp...");
 						window.Telegram.WebApp.close();
-					}, 2000);  // Увеличим задержку до 2 секунд
+					}, 20000);  // Увеличим задержку до 2 секунд
 				} else {
 					console.warn("⚠️ Telegram WebApp API недоступен, данные не отправлены!");
 				}
