@@ -68,7 +68,17 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
+		tg.expand(); // Разворачиваем WebApp
+
+		// Получаем user_id из Telegram API
+		const user_id = tg.initDataUnsafe?.user?.id || null;
+
+		if (!user_id) {
+			console.error("❌ Ошибка: user_id не получен из Telegram WebApp!");
+		} else {
+			console.log("✅ Получен user_id:", user_id);
+		}
+
 
         const allCards = [
     // Старшие Арканы (22 карты)
@@ -168,11 +178,11 @@
 
 					console.log("🚀 Отправляем данные в бота:", payload);
 					window.Telegram.WebApp.sendData(JSON.stringify(payload));
-					
+
 					setTimeout(() => {
-						console.log("⏳ Ожидание перед закрытием WebApp...");
+						console.log("⏳ Закрываем WebApp...");
 						window.Telegram.WebApp.close();
-					}, 20000);  // Увеличим задержку до 2 секунд
+					}, 2000);  // 2 секунды задержки перед закрытием
 				} else {
 					console.warn("⚠️ Telegram WebApp API недоступен, данные не отправлены!");
 				}
