@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Выбор карт Таро</title>
@@ -20,17 +20,19 @@
             justify-content: center;
             gap: 10px;
             margin: 20px 0;
+            flex-wrap: wrap;
         }
         .card {
             width: 150px;
             height: 250px;
             perspective: 1000px;
             cursor: pointer;
+            position: relative;
         }
         .card-inner {
             width: 100%;
             height: 100%;
-            position: relative;
+            position: absolute;
             transform-style: preserve-3d;
             transition: transform 0.6s;
         }
@@ -54,6 +56,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 20px;
         }
         button:disabled {
             background-color: #ccc;
@@ -67,89 +70,104 @@
     <button id="submitBtn" disabled>✅ Отправить выбранные карты</button>
 
     <script>
-    window.onload = function () {
-        const tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем WebApp
+        document.addEventListener("DOMContentLoaded", function () {
+            const tg = window.Telegram.WebApp;
+            tg.expand(); // Разворачиваем WebApp на весь экран
 
-        // Получаем user_id из Telegram API
-        const params = new URLSearchParams(window.location.search);
-		const user_id = params.get("user_id") || tg.initDataUnsafe?.user?.id || null;
+            // Получаем user_id из URL или Telegram API
+            const params = new URLSearchParams(window.location.search);
+            let user_id = params.get("user_id") || (tg.initDataUnsafe?.user?.id || null);
 
-        if (!user_id) {
-            console.error("❌ Ошибка: user_id не получен из Telegram WebApp!");
-        } else {
-            console.log("✅ Получен user_id:", user_id);
-        }
-
-        const allCards = [
-            "Шут.jpg", "Маг.jpg", "Верховная жрица.jpg", "Императрица.jpg", "Император.jpg", "Иерофант.jpg",
-            "Влюбленные.jpg", "Колесница.jpg", "Сила.jpg", "Отшельник.jpg", "Колесо фортуны.jpg", "Справедливость.jpg",
-            "Повешенный.jpg", "Смерть.jpg", "Умеренность.jpg", "Дьявол.jpg", "Башня.jpg", "Звезда.jpg",
-            "Луна.jpg", "Солнце.jpg", "Суд.jpg", "Мир.jpg"
-        ];
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+            if (!user_id) {
+                console.error("❌ Ошибка: user_id не получен!");
+                alert("Ошибка: WebApp не смог получить ваш user_id!");
+                return;
+            } else {
+                console.log("✅ Получен user_id:", user_id);
             }
-            return array;
-        }
 
-        // Выбираем случайные 5 карт
-        const selectedCards = shuffle([...allCards]).slice(0, 5);
+            const allCards = [
+    "Шут.jpg", "Маг.jpg", "Верховная жрица.jpg", "Императрица.jpg", "Император.jpg", "Иерофант.jpg", 
+    "Влюбленные.jpg", "Колесница.jpg", "Сила.jpg", "Отшельник.jpg", "Колесо фортуны.jpg", "Справедливость.jpg",
+    "Повешенный.jpg", "Смерть.jpg", "Умеренность.jpg", "Дьявол.jpg", "Башня.jpg", "Звезда.jpg", 
+    "Луна.jpg", "Солнце.jpg", "Суд.jpg", "Мир.jpg",
+    "Туз жезлов.jpg", "Двойка жезлов.jpg", "Тройка жезлов.jpg", "Четверка жезлов.jpg", "Пятерка жезлов.jpg",
+    "Шестерка жезлов.jpg", "Семерка жезлов.jpg", "Восьмерка жезлов.jpg", "Девятка жезлов.jpg", "Десятка жезлов.jpg",
+    "Паж жезлов.jpg", "Рыцарь жезлов.jpg", "Королева жезлов.jpg", "Король жезлов.jpg",
+    "Туз кубков.jpg", "Двойка кубков.jpg", "Тройка кубков.jpg", "Четверка кубков.jpg", "Пятерка кубков.jpg",
+    "Шестерка кубков.jpg", "Семерка кубков.jpg", "Восьмерка кубков.jpg", "Девятка кубков.jpg", "Десятка кубков.jpg",
+    "Паж кубков.jpg", "Рыцарь кубков.jpg", "Королева кубков.jpg", "Король кубков.jpg",
+    "Туз мечей.jpg", "Двойка мечей.jpg", "Тройка мечей.jpg", "Четверка мечей.jpg", "Пятерка мечей.jpg",
+    "Шестерка мечей.jpg", "Семерка мечей.jpg", "Восьмерка мечей.jpg", "Девятка мечей.jpg", "Десятка мечей.jpg",
+    "Паж мечей.jpg", "Рыцарь мечей.jpg", "Королева мечей.jpg", "Король мечей.jpg",
+    "Туз пентаклей.jpg", "Двойка пентаклей.jpg", "Тройка пентаклей.jpg", "Четверка пентаклей.jpg", "Пятерка пентаклей.jpg",
+    "Шестерка пентаклей.jpg", "Семерка пентаклей.jpg", "Восьмерка пентаклей.jpg", "Девятка пентаклей.jpg", "Десятка пентаклей.jpg",
+    "Паж пентаклей.jpg", "Рыцарь пентаклей.jpg", "Королева пентаклей.jpg", "Король пентаклей.jpg"
+];
 
-        const cardsContainer = document.getElementById("cards");
-        const selected = [];
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
 
-        selectedCards.forEach(card => {
-            const cardElement = document.createElement("div");
-            cardElement.className = "card";
-            cardElement.innerHTML = `
-                <div class="card-inner" onclick="flipCard(this, '${card}')">
-                    <div class="card-back">
-                        <img src="cards/card_back.jpg" alt="Back" style="width: 100%; height: 100%;">
+            // Выбираем случайные 5 карт
+            const availableCards = shuffle([...allCards]).slice(0, 5);
+            const cardsContainer = document.getElementById("cards");
+            let selected = [];
+
+            availableCards.forEach(card => {
+                const cardElement = document.createElement("div");
+                cardElement.className = "card";
+                cardElement.innerHTML = `
+                    <div class="card-inner" onclick="flipCard(this, '${card}')">
+                        <div class="card-back">
+                            <img src="cards/card_back.jpg" alt="Back" style="width: 100%; height: 100%;">
+                        </div>
+                        <div class="card-front">
+                            <img src="cards/${card}" alt="${card}" style="width: 100%; height: 100%;">
+                        </div>
                     </div>
-                    <div class="card-front">
-                        <img src="cards/${card}" alt="${card}" style="width: 100%; height: 100%;">
-                    </div>
-                </div>
-            `;
-            cardsContainer.appendChild(cardElement);
-        });
+                `;
+                cardsContainer.appendChild(cardElement);
+            });
 
-        window.flipCard = function (element, card) {
-            const parent = element.parentElement;
-            if (!parent.classList.contains("flipped")) {
-                parent.classList.add("flipped");
-                selected.push(card);
+            window.flipCard = function (element, card) {
+                const parent = element.parentElement;
+                if (!parent.classList.contains("flipped")) {
+                    parent.classList.add("flipped");
+                    selected.push(card);
+
+                    if (selected.length === 3) {
+                        document.getElementById("submitBtn").disabled = false;
+                    }
+                }
+            };
+
+            document.getElementById("submitBtn").addEventListener("click", () => {
                 if (selected.length === 3) {
-                    document.getElementById("submitBtn").disabled = false;
+                    console.log("📤 Отправка данных в Telegram:", selected);
+
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        const payload = JSON.stringify({ user_id, cards: selected });
+
+                        console.log("🚀 Отправляем данные в бота:", payload);
+                        tg.sendData(payload); // Отправка в Telegram WebAppData API
+
+                        setTimeout(() => {
+                            console.log("⏳ Закрываем WebApp...");
+                            tg.close();
+                        }, 1000);
+                    } else {
+                        console.warn("⚠️ Telegram WebApp API недоступен!");
+                        alert("Ошибка: Telegram WebApp API недоступен.");
+                    }
                 }
-            }
-        };
-
-        document.getElementById("submitBtn").addEventListener("click", () => {
-            if (selected.length === 3) {
-                console.log("📤 Отправка данных в Telegram:", selected);
-
-                if (window.Telegram && window.Telegram.WebApp) {
-                    const payload = { user_id: user_id, cards: selected };
-
-                    console.log("🚀 Отправляем данные в бота:", payload);
-                    window.Telegram.WebApp.sendData(JSON.stringify(payload));
-
-                    setTimeout(() => {
-                        console.log("⏳ Закрываем WebApp...");
-                        window.Telegram.WebApp.close();
-                    }, 2000);
-                } else {
-                    console.warn("⚠️ Telegram WebApp API недоступен, данные не отправлены!");
-                }
-            }
+            });
         });
-    };
-</script>
+    </script>
 
 </body>
 </html>
