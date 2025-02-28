@@ -148,47 +148,6 @@
                 }
             }
         });
-		
-				// Функция для отправки данных напрямую в бота
-		async function sendToBotDirectly() {
-			if (selected.length === 3) {
-				console.log("📤 Отправка данных напрямую в бота...", selected);
-
-				const botToken = "7910112893:AAFpzj1kLgpJt5LpsS1nlIeiciXR89CcGLg";  // 🔥 Укажи токен своего бота
-				const chatId = user_id;  // 📌 Отправляем сообщение пользователю с этим user_id
-				const text = `🔮 Выбраны карты: ${selected.join(", ")}`;
-
-				const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-				const payload = {
-					chat_id: chatId,
-					text: text
-				};
-
-				try {
-					const response = await fetch(url, {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify(payload)
-					});
-
-					const result = await response.json();
-					console.log("✅ Ответ Telegram API:", result);
-
-					if (result.ok) {
-						alert("✅ Данные отправлены в Telegram!");
-					} else {
-						alert("❌ Ошибка отправки: " + result.description);
-					}
-				} catch (error) {
-					console.error("❌ Ошибка при отправке запроса:", error);
-					alert("❌ Ошибка при отправке данных!");
-				}
-			}
-		}
-
-		// Привязываем к кнопке "Отправить"
-		document.getElementById("submitBtn").addEventListener("click", sendToBotDirectly);
-
     };
 </script>
 
