@@ -39,6 +39,7 @@
             perspective: 1000px;
             transform-origin: center;
             cursor: pointer;
+            transform: rotate(0deg); /* Убираем наклон */
         }
         .card-inner {
             width: 100%;
@@ -65,6 +66,16 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+        #selected-cards {
+            display: none;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .selected-card {
+            width: 120px;
+            height: 200px;
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -84,6 +95,7 @@
 <body>
     <h1>🎯 Выберите 3 карты Таро</h1>
     <div id="circle"></div>
+    <div id="selected-cards"></div>
     <button id="submitBtn" disabled>✅ Отправить выбранные карты</button>
 
     <script>
@@ -119,6 +131,7 @@
 
             const availableCards = shuffle([...allCards]).slice(0, 5);
             const circleContainer = document.getElementById("circle");
+            const selectedCardsContainer = document.getElementById("selected-cards");
             let selected = [];
 
             function arrangeCardsInCircle() {
@@ -161,9 +174,21 @@
 
                     if (selected.length === 3) {
                         document.getElementById("submitBtn").disabled = false;
+                        setTimeout(() => showSelectedCards(), 1000);
                     }
                 }
             };
+
+            function showSelectedCards() {
+                circleContainer.style.display = "none";
+                selectedCardsContainer.style.display = "flex";
+                selected.forEach(card => {
+                    const cardElement = document.createElement("div");
+                    cardElement.className = "selected-card";
+                    cardElement.innerHTML = `<img src="cards/${card}" alt="${card}">`;
+                    selectedCardsContainer.appendChild(cardElement);
+                });
+            }
 
             document.getElementById("submitBtn").addEventListener("click", () => {
                 if (selected.length === 3) {
