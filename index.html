@@ -151,20 +151,22 @@
             let selected = [];
 
             function arrangeCardsInCircle() {
-                const totalCards = availableCards.length;
-                const radius = 120;
-                const centerX = 175;
-                const centerY = 175;
+				const totalCards = availableCards.length;
+				const radius = 120;
+				const centerX = 175;
+				const centerY = 175;
 
-                availableCards.forEach((card, index) => {
-                    const angle = (index / totalCards) * Math.PI * 2;
-                    const x = centerX + radius * Math.cos(angle) - 50;
-                    const y = centerY + radius * Math.sin(angle) - 85;
+				availableCards.forEach((card, index) => {
+					const angle = (index / totalCards) * Math.PI * 2;
+					const x = centerX + radius * Math.cos(angle) - 50;
+					const y = centerY + radius * Math.sin(angle) - 85;
+					const rotation = angle * (180 / Math.PI); // Вычисляем угол в градусах
 
-                    const cardElement = document.createElement("div");
-                    cardElement.className = "card";
-                    cardElement.style.left = `${x}px`;
-                    cardElement.style.top = `${y}px`;
+					const cardElement = document.createElement("div");
+					cardElement.className = "card";
+					cardElement.style.left = `${x}px`;
+					cardElement.style.top = `${y}px`;
+					cardElement.style.transform = `rotate(${rotation}deg)`;
                     cardElement.innerHTML = `
                         <div class="card-inner" onclick="flipCard(this, '${card}')">
                             <div class="card-back">
