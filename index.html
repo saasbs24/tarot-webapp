@@ -5,46 +5,80 @@
     <title>Выбор карт Таро</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор карт Таро</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f5f5f5;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
         h1 {
             color: #333;
         }
-        #cards {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
+        #circle {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: auto;
+            margin-top: 20px;
+            transform-origin: center;
+            animation: rotateCircle 10s linear infinite;
+        }
+        @keyframes rotateCircle {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
         .card {
-            width: 120px;
-            height: 200px;
+            width: 100px;
+            height: 170px;
+            position: absolute;
             perspective: 1000px;
-            cursor: pointer;
-            position: relative;
             transform-origin: center;
-            animation: spin 6s linear infinite;
+            cursor: pointer;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+        .card-front {
+            transform: rotateY(180deg);
         }
         .card img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: rotate(0deg);
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .selected-cards {
-            display: flex;
+        #selected-cards {
+            display: none;
             justify-content: center;
             gap: 15px;
             margin-top: 20px;
+        }
+        .selected-card {
+            width: 120px;
+            height: 200px;
         }
         button {
             padding: 10px 20px;
@@ -64,14 +98,15 @@
 </head>
 <body>
     <h1>🎯 Выберите 3 карты Таро</h1>
-    <div id="cards"></div>
-    <div id="selectedCards" class="selected-cards"></div>
+    <div id="circle"></div>
+    <div id="selected-cards"></div>
     <button id="submitBtn" disabled>✅ Отправить выбранные карты</button>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const tg = window.Telegram.WebApp;
             tg.expand();
-            
+
             const params = new URLSearchParams(window.location.search);
             let user_id = params.get("user_id") || (tg.initDataUnsafe?.user?.id || null);
 
@@ -79,27 +114,29 @@
                 console.error("❌ Ошибка: user_id не получен!");
                 alert("Ошибка: WebApp не смог получить ваш user_id!");
                 return;
+            } else {
+                console.log("✅ Получен user_id:", user_id);
             }
 
             const allCards = [
-				"Шут.jpg", "Маг.jpg", "Верховная жрица.jpg", "Императрица.jpg", "Император.jpg", "Иерофант.jpg", 
-				"Влюбленные.jpg", "Колесница.jpg", "Сила.jpg", "Отшельник.jpg", "Колесо фортуны.jpg", "Справедливость.jpg",
-				"Повешенный.jpg", "Смерть.jpg", "Умеренность.jpg", "Дьявол.jpg", "Башня.jpg", "Звезда.jpg", 
-				"Луна.jpg", "Солнце.jpg", "Суд.jpg", "Мир.jpg",
-				"Туз жезлов.jpg", "Двойка жезлов.jpg", "Тройка жезлов.jpg", "Четверка жезлов.jpg", "Пятерка жезлов.jpg",
-				"Шестерка жезлов.jpg", "Семерка жезлов.jpg", "Восьмерка жезлов.jpg", "Девятка жезлов.jpg", "Десятка жезлов.jpg",
-				"Паж жезлов.jpg", "Рыцарь жезлов.jpg", "Королева жезлов.jpg", "Король жезлов.jpg",
-				"Туз кубков.jpg", "Двойка кубков.jpg", "Тройка кубков.jpg", "Четверка кубков.jpg", "Пятерка кубков.jpg",
-				"Шестерка кубков.jpg", "Семерка кубков.jpg", "Восьмерка кубков.jpg", "Девятка кубков.jpg", "Десятка кубков.jpg",
-				"Паж кубков.jpg", "Рыцарь кубков.jpg", "Королева кубков.jpg", "Король кубков.jpg",
-				"Туз мечей.jpg", "Двойка мечей.jpg", "Тройка мечей.jpg", "Четверка мечей.jpg", "Пятерка мечей.jpg",
-				"Шестерка мечей.jpg", "Семерка мечей.jpg", "Восьмерка мечей.jpg", "Девятка мечей.jpg", "Десятка мечей.jpg",
-				"Паж мечей.jpg", "Рыцарь мечей.jpg", "Королева мечей.jpg", "Король мечей.jpg",
-				"Туз пентаклей.jpg", "Двойка пентаклей.jpg", "Тройка пентаклей.jpg", "Четверка пентаклей.jpg", "Пятерка пентаклей.jpg",
-				"Шестерка пентаклей.jpg", "Семерка пентаклей.jpg", "Восьмерка пентаклей.jpg", "Девятка пентаклей.jpg", "Десятка пентаклей.jpg",
-				"Паж пентаклей.jpg", "Рыцарь пентаклей.jpg", "Королева пентаклей.jpg", "Король пентаклей.jpg"
-			];
-            
+    "Шут.jpg", "Маг.jpg", "Верховная жрица.jpg", "Императрица.jpg", "Император.jpg", "Иерофант.jpg", 
+    "Влюбленные.jpg", "Колесница.jpg", "Сила.jpg", "Отшельник.jpg", "Колесо фортуны.jpg", "Справедливость.jpg",
+    "Повешенный.jpg", "Смерть.jpg", "Умеренность.jpg", "Дьявол.jpg", "Башня.jpg", "Звезда.jpg", 
+    "Луна.jpg", "Солнце.jpg", "Суд.jpg", "Мир.jpg",
+    "Туз жезлов.jpg", "Двойка жезлов.jpg", "Тройка жезлов.jpg", "Четверка жезлов.jpg", "Пятерка жезлов.jpg",
+    "Шестерка жезлов.jpg", "Семерка жезлов.jpg", "Восьмерка жезлов.jpg", "Девятка жезлов.jpg", "Десятка жезлов.jpg",
+    "Паж жезлов.jpg", "Рыцарь жезлов.jpg", "Королева жезлов.jpg", "Король жезлов.jpg",
+    "Туз кубков.jpg", "Двойка кубков.jpg", "Тройка кубков.jpg", "Четверка кубков.jpg", "Пятерка кубков.jpg",
+    "Шестерка кубков.jpg", "Семерка кубков.jpg", "Восьмерка кубков.jpg", "Девятка кубков.jpg", "Десятка кубков.jpg",
+    "Паж кубков.jpg", "Рыцарь кубков.jpg", "Королева кубков.jpg", "Король кубков.jpg",
+    "Туз мечей.jpg", "Двойка мечей.jpg", "Тройка мечей.jpg", "Четверка мечей.jpg", "Пятерка мечей.jpg",
+    "Шестерка мечей.jpg", "Семерка мечей.jpg", "Восьмерка мечей.jpg", "Девятка мечей.jpg", "Десятка мечей.jpg",
+    "Паж мечей.jpg", "Рыцарь мечей.jpg", "Королева мечей.jpg", "Король мечей.jpg",
+    "Туз пентаклей.jpg", "Двойка пентаклей.jpg", "Тройка пентаклей.jpg", "Четверка пентаклей.jpg", "Пятерка пентаклей.jpg",
+    "Шестерка пентаклей.jpg", "Семерка пентаклей.jpg", "Восьмерка пентаклей.jpg", "Девятка пентаклей.jpg", "Десятка пентаклей.jpg",
+    "Паж пентаклей.jpg", "Рыцарь пентаклей.jpg", "Королева пентаклей.jpg", "Король пентаклей.jpg"
+];
+
             function shuffle(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -109,50 +146,99 @@
             }
 
             const availableCards = shuffle([...allCards]).slice(0, 5);
-            const cardsContainer = document.getElementById("cards");
-            const selectedCardsContainer = document.getElementById("selectedCards");
+            const circleContainer = document.getElementById("circle");
+            const selectedCardsContainer = document.getElementById("selected-cards");
             let selected = [];
 
-            availableCards.forEach(card => {
-                const cardElement = document.createElement("div");
-                cardElement.className = "card";
-                cardElement.innerHTML = `<img src="cards/${card}" alt="${card}">`;
-                cardElement.addEventListener("click", function () {
-                    if (selected.length < 3 && !selected.includes(card)) {
-                        selected.push(card);
-                        cardElement.classList.add("selected");
-                    }
-                    if (selected.length === 3) {
-                        finalizeSelection();
-                    }
-                });
-                cardsContainer.appendChild(cardElement);
-            });
+            function arrangeCardsInCircle() {
+                const totalCards = availableCards.length;
+                const radius = 120;
+                const centerX = 175;
+                const centerY = 175;
 
-            function finalizeSelection() {
-                cardsContainer.innerHTML = "";
+                availableCards.forEach((card, index) => {
+                    const angle = (index / totalCards) * Math.PI * 2;
+                    const x = centerX + radius * Math.cos(angle) - 50;
+                    const y = centerY + radius * Math.sin(angle) - 85;
+
+                    const cardElement = document.createElement("div");
+                    cardElement.className = "card";
+                    cardElement.style.left = `${x}px`;
+                    cardElement.style.top = `${y}px`;
+                    cardElement.innerHTML = `
+                        <div class="card-inner" onclick="flipCard(this, '${card}')">
+                            <div class="card-back">
+                                <img src="cards/card_back.jpg" alt="Back">
+                            </div>
+                            <div class="card-front">
+                                <img src="cards/${card}" alt="${card}">
+                            </div>
+                        </div>
+                    `;
+
+                    cardElement.addEventListener("click", function () {
+                        if (selected.length < 3 && !selected.includes(card)) {
+                            selected.push(card);
+                            cardElement.classList.add("selected");
+                        }
+                        if (selected.length === 3) {
+                            finalizeSelection();
+                        }
+                    });
+                    circleContainer.appendChild(cardElement);
+                });
+            }
+
+            arrangeCardsInCircle();
+
+            window.flipCard = function (element, card) {
+                const parent = element.parentElement;
+                if (!parent.classList.contains("flipped")) {
+                    parent.classList.add("flipped");
+                    selected.push(card);
+
+                    if (selected.length === 3) {
+                        document.getElementById("submitBtn").disabled = false;
+                        setTimeout(() => showSelectedCards(), 1000);
+                    }
+                }
+            };
+			
+			function finalizeSelection() {
+                circleContainer.innerHTML = "";
                 selectedCardsContainer.innerHTML = "";
+                selectedCardsContainer.style.display = "flex";
                 selected.forEach(card => {
                     const selectedCard = document.createElement("div");
-                    selectedCard.className = "card";
+                    selectedCard.className = "selected-card";
                     selectedCard.innerHTML = `<img src="cards/${card}" alt="${card}">`;
                     selectedCardsContainer.appendChild(selectedCard);
                 });
                 document.getElementById("submitBtn").disabled = false;
             }
-            
+
             document.getElementById("submitBtn").addEventListener("click", () => {
                 if (selected.length === 3) {
                     console.log("📤 Отправка данных в Telegram:", selected);
-                    const payload = JSON.stringify({ user_id, cards: selected });
-                    tg.sendData(payload);
-                    setTimeout(() => {
-                        tg.close();
-                    }, 1000);
+
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        const payload = JSON.stringify({ user_id, cards: selected });
+
+                        console.log("🚀 Отправляем данные в бота:", payload);
+                        tg.sendData(payload);
+
+                        setTimeout(() => {
+                            console.log("⏳ Закрываем WebApp...");
+                            tg.close();
+                        }, 1000);
+                    } else {
+                        console.warn("⚠️ Telegram WebApp API недоступен!");
+                        alert("Ошибка: Telegram WebApp API недоступен.");
+                    }
                 }
             });
         });
     </script>
+
 </body>
 </html>
-
