@@ -85,19 +85,25 @@
             border-radius: 10px;
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
+			padding: 10px 20px;
+			font-size: 16px;
+			background-color: #4caf50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			margin-top: 20px;
+			display: block;  /* Делаем кнопку блочным элементом */
+			width: 100%;  /* Растягиваем на всю ширину */
+			max-width: 300px;  /* Ограничиваем максимальную ширину */
+			text-align: center;  /* Центрируем текст */
+			line-height: normal;  /* Исправляем высоту строки */
+		}
+
+		button:disabled {
+			background-color: #ccc;
+			cursor: not-allowed;
+		}
     </style>
 </head>
 <body>
