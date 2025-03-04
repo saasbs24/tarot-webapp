@@ -107,21 +107,22 @@
             margin-top: 20px;
         }
 
-        button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            padding: 12px 25px;
-            font-size: 18px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
+        /* Исправление кнопки */
+		button {
+			padding: 10px 20px;
+			font-size: 16px;
+			background-color: #4caf50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			margin-top: 20px;
+			display: block;  /* Фикс: делаем кнопку блочной */
+			width: 100%;  /* Фикс: вся ширина */
+			max-width: 300px;  /* Ограничение ширины */
+			text-align: center;  /* Центрирование */
+			line-height: normal;  /* Исправленный line-height */
+		}
 
         button:disabled {
             background-color: #ccc;
