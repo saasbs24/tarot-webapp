@@ -171,82 +171,72 @@
 					cardElement.style.left = `${x}px`;
 					cardElement.style.top = `${y}px`;
 					cardElement.style.transform = `rotate(${rotation}deg)`;
-                    cardElement.innerHTML = `
-                        <div class="card-inner" onclick="flipCard(this, '${card}')">
-                            <div class="card-back">
-                                <img src="cards/card_back.jpg" alt="Back">
-                            </div>
-                            <div class="card-front">
-                                <img src="cards/${card}" alt="${card}">
-                            </div>
-                        </div>
-                    `;
+					cardElement.innerHTML = `
+						<div class="card-inner" onclick="flipCard(this, '${card}')">
+							<div class="card-back">
+								<img src="cards/card_back.jpg" alt="Back">
+							</div>
+							<div class="card-front">
+								<img src="cards/${card}" alt="${card}">
+							</div>
+						</div>
+					`;
 
-                    cardElement.addEventListener("click", function () {
-                        if (selected.length < 3 && !selected.includes(card)) {
-                            selected.push(card);
-                            cardElement.classList.add("selected");
-                        }
-                        if (selected.length === 3) {
-                            finalizeSelection();
-                        }
-                    });
-                    circleContainer.appendChild(cardElement);
-                });
-            }
+					circleContainer.appendChild(cardElement);
+				});
+			}
 
-            arrangeCardsInCircle();
+			arrangeCardsInCircle();
 
-            window.flipCard = function (element, card) {
-                const parent = element.parentElement;
-                if (!parent.classList.contains("flipped")) {
-                    parent.classList.add("flipped");
-                    selected.push(card);
+			window.flipCard = function (element, card) {
+				const parent = element.parentElement;
+				if (!parent.classList.contains("flipped") && selected.length < 3) {
+					parent.classList.add("flipped");
+					selected.push(card);
 
-                    if (selected.length === 3) {
-                        document.getElementById("submitBtn").disabled = false;
-                        setTimeout(() => showSelectedCards(), 1000);
-                    }
-                }
-            };
-			
+					if (selected.length === 3) {
+						setTimeout(() => showSelectedCards(), 1000);
+					}
+				}
+			};
+
 			function showSelectedCards() {
-                circleContainer.innerHTML = "";
-                selectedCardsContainer.innerHTML = "";
-                selectedCardsContainer.style.display = "flex";
-				
-                selected.forEach(card => {
+				circleContainer.innerHTML = "";
+				selectedCardsContainer.innerHTML = "";
+				selectedCardsContainer.style.display = "flex";
+
+				selected.forEach(card => {
 					const selectedCard = document.createElement("div");
 					selectedCard.className = "selected-card";
 					selectedCard.innerHTML = `<img src="cards/${card}" alt="${card}">`;
 					selectedCardsContainer.appendChild(selectedCard);
 				});
 
-				console.log("✅ Кнопка активируется после выбора карт");
-				document.getElementById("submitBtn").disabled = false; // Повторно активируем кнопку
+				console.log("✅ Кнопка активируется после выравнивания карт");
+				document.getElementById("submitBtn").disabled = false;
 			}
 
-            document.getElementById("submitBtn").addEventListener("click", () => {
-                if (selected.length === 3) {
-                    console.log("📤 Отправка данных в Telegram:", selected);
+			document.getElementById("submitBtn").addEventListener("click", () => {
+				if (selected.length === 3) {
+					console.log("📤 Отправка данных в Telegram:", selected);
 
-                    if (window.Telegram && window.Telegram.WebApp) {
-                        const payload = JSON.stringify({ user_id, cards: selected });
+					if (window.Telegram && window.Telegram.WebApp) {
+						const payload = JSON.stringify({ user_id, cards: selected });
 
-                        console.log("🚀 Отправляем данные в бота:", payload);
-                        tg.sendData(payload);
+						console.log("🚀 Отправляем данные в бота:", payload);
+						tg.sendData(payload);
 
-                        setTimeout(() => {
-                            console.log("⏳ Закрываем WebApp...");
-                            tg.close();
-                        }, 1000);
-                    } else {
-                        console.warn("⚠️ Telegram WebApp API недоступен!");
-                        alert("Ошибка: Telegram WebApp API недоступен.");
-                    }
-                }
-            });
-        });
+						setTimeout(() => {
+							console.log("⏳ Закрываем WebApp...");
+							tg.close();
+						}, 1000);
+					} else {
+						console.warn("⚠️ Telegram WebApp API недоступен!");
+						alert("Ошибка: Telegram WebApp API недоступен.");
+					}
+				}
+			});
+		});
     </script>
 
 </body>
